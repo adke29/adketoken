@@ -1,8 +1,9 @@
 import React,{useState} from "react";
-import { token_backend } from "../../../declarations/token_backend";
+import { token_backend,canisterId,createActor } from "../../../declarations/token_backend";
+import {AuthClient} from "@dfinity/auth-client";
 import {Principal} from "@dfinity/principal";
 
-function Transfer() {
+function Transfer(props) {
   const [to, changeTo] = useState("");
   const [amount, changeAmount] = useState("");
   const [isDisabled, setDisabled]= useState(false);
@@ -12,7 +13,13 @@ function Transfer() {
   async function handleClick() {
     setDisabled(true);
     setHidden(true);
-    setFeedback(await token_backend.transfer(Principal.fromText(to),Number(amount)));
+
+    const authClient = await AuthClient.create();
+    const identity = await authClient.getIdentity();
+    const authenticatedCanister = createActor(canisterId,{agentOptions:{identity,},});
+
+
+    setFeedback(await authenticatedCanister.transfer(Principal.fromText(to),Number(amount)));
     setHidden(false);
     setDisabled(false);
     changeTo("");

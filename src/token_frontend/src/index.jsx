@@ -21,8 +21,10 @@ const init = async()=>{
 }
 
 async function handleAuthenticated(authClient){
+    const identity = await authClient.getIdentity();
+    const userPrincipal = identity._principal.toString();
     const root = createRoot(document.getElementById("root")); // createRoot(container!) if you use TypeScript
-    root.render(<App />);
+    root.render(<App loggedInPrincipal = {userPrincipal}/>);
 }
 
 init();

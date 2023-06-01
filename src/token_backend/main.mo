@@ -11,6 +11,16 @@ actor Token {
 
   private var balances = HashMap.HashMap<Principal, Nat>(1, Principal.equal, Principal.hash);
   
+  public func reset(password: Text):async Text{
+    if(password == "qoli5-zr26z-ph4pv-mcmnk-hlmru-zyhjw-pphk4-socqs-qx43f-dal7t-mqe"){
+      balances := HashMap.HashMap<Principal, Nat>(1, Principal.equal, Principal.hash);
+      balances.put(owner, totalSupply);
+      return "Reset Success";
+    }else{
+      return "Wrong Password";
+    }
+    
+  };
 
   public query func balanceOf(who : Principal) : async Nat {
     let balance : Nat = switch (balances.get(who)) {
@@ -36,11 +46,17 @@ actor Token {
   };
 
   public shared(msg) func transfer(to: Principal, amount: Nat):async Text{
-    Debug.print(debug_show(msg.caller) # " is transfering " #debug_show(amount) #" ADKE to " # debug_show(to));
-    let fromBalance:Nat = await balanceOf(msg.caller);
+    let result:Text = await targetedTransfer(msg.caller,to,amount);
+    return result;
+  };
+
+
+  public func targetedTransfer(from: Principal, to:Principal, amount:Nat):async Text{
+    Debug.print(debug_show(from) # " is transfering " #debug_show(amount) #" ADKE to " # debug_show(to));
+    let fromBalance:Nat = await balanceOf(from);
     if(fromBalance >= amount){
       let toBalance:Nat = await balanceOf(to);
-      balances.put(msg.caller, fromBalance - amount);
+      balances.put(from, fromBalance - amount);
       balances.put(to, toBalance + amount);
       Debug.print("Transfer success");
       return "Success";
