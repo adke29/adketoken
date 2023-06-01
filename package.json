@@ -19,7 +19,11 @@
   "dependencies": {
     "@dfinity/agent": "^0.15.6",
     "@dfinity/candid": "^0.15.6",
-    "@dfinity/principal": "^0.15.6"
+    "@dfinity/principal": "^0.15.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "ts-loader": "^9.4.3",
+    "typescript": "^5.0.4"
   },
   "devDependencies": {
     "assert": "2.0.0",
