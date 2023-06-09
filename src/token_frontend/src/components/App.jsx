@@ -9,9 +9,9 @@ function App(props) {
   return (
     <div id="screen">
       <Header />
-      <Faucet userPrincipal={props.loggedInPrincipal}/>
+      <Faucet />
       <Balance />
-      <Transfer userPrincipal={props.loggedInPrincipal}/>
+      <Transfer />
     </div>
   );
 }

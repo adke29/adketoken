@@ -1,29 +1,24 @@
-import React,{useState} from "react";
-import { token_backend,canisterId,createActor } from "../../../declarations/token_backend";
-import {AuthClient} from "@dfinity/auth-client";
-import {Principal} from "@dfinity/principal";
+import React, { useState } from "react";
+import { Principal } from "@dfinity/principal";
+import { token_backend } from "../../../declarations/token_backend";
 
-function Transfer(props) {
-  const [to, changeTo] = useState("");
-  const [amount, changeAmount] = useState("");
-  const [isDisabled, setDisabled]= useState(false);
-  const [feedback, setFeedback] = useState("");
+function Transfer() {
+  const [recipientId, setId] = useState("");
+  const [amount, setAmount] = useState("");
   const [isHidden, setHidden] = useState(true);
+  const [feedback, setFeedback] = useState("");
+  const [isDisabled, setDisable] = useState(false);
 
   async function handleClick() {
-    setDisabled(true);
     setHidden(true);
+    setDisable(true);
+    const recipient = Principal.fromText(recipientId);
+    const amountToTransfer = Number(amount);
 
-    const authClient = await AuthClient.create();
-    const identity = await authClient.getIdentity();
-    const authenticatedCanister = createActor(canisterId,{agentOptions:{identity,},});
-
-
-    setFeedback(await authenticatedCanister.transfer(Principal.fromText(to),Number(amount)));
+    const result = await token_backend.transfer(recipient, amountToTransfer);
+    setFeedback(result);
     setHidden(false);
-    setDisabled(false);
-    changeTo("");
-    changeAmount("");
+    setDisable(false);
   }
 
   return (
@@ -36,8 +31,8 @@ function Transfer(props) {
               <input
                 type="text"
                 id="transfer-to-id"
-                value = {to}
-                onChange = {(e)=>{changeTo(e.target.value)}}
+                value={recipientId}
+                onChange={(e) => setId(e.target.value)}
               />
             </li>
           </ul>
@@ -49,18 +44,18 @@ function Transfer(props) {
               <input
                 type="number"
                 id="amount"
-                value = {amount}
-                onChange = {(e)=>{changeAmount(e.target.value)}}
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
               />
             </li>
           </ul>
         </fieldset>
         <p className="trade-buttons">
-          <button id="btn-transfer" onClick={handleClick} disabled = {isDisabled}>
+          <button id="btn-transfer" onClick={handleClick} disabled={isDisabled}>
             Transfer
           </button>
         </p>
-        <p hidden = {isHidden}>{feedback}</p>
+        <p hidden={isHidden}>{feedback}</p>
       </div>
     </div>
   );
